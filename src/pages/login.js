@@ -1,6 +1,7 @@
 import React, { ReactNode, useContext, useEffect,useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
+import { AuthContext } from '../context/authcontext';
 import '../css/style.css';
 import axios from 'axios';
 
@@ -8,16 +9,15 @@ import axios from 'axios';
 function Login() {
     const {register, handleSubmit, formState: { errors }} = useForm();
     const [errorMessage, setErrorMessage] = useState(null);
-    const navigate = useNavigate();
+    const { login, setLogin ,user ,setUser } = useContext(AuthContext)
 
     const onSubmit = (data) => {
         axios.post('test_endpoint',data)
         .then(response => {
             if(setUser) {
                 setUser(response.data);
-                setLoggin(true)
+                setLogin(true)
                 localStorage.setItem('token', response.data.token);
-                navigate("/admin")
             }
         })
         .catch(error => {

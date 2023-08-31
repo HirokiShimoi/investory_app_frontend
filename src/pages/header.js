@@ -22,7 +22,7 @@ function Header() {
     return (
         <header className='other-header'>
             <nav>
-                <div className=''container-fluid d-flex justify-content-between>
+                <div className='container-fluid d-flex justify-content-between'>
                     <img src={kagimoto} alt="logo" width="250" className="d-inline-block align-text-top other-header-logo"/>
                 </div>
                 <div>

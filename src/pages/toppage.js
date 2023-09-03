@@ -4,7 +4,7 @@ import { Container, Grid, Card, CardContent, Typography } from '@mui/material';
 
 const styles = {
     card: {
-      width: '400px',
+      width: 'px',
       height: '400px',
     },
   };

@@ -1,10 +1,9 @@
-import React from 'react';
-import Header from './header';  // 作成済みのヘッダーコンポーネント
-import { Container, Grid, Card, CardContent, Typography } from '@mui/material';
+import React from 'react'
+import Header from './header'
 
 const styles = {
     card: {
-      width: 'px',
+      width: '400px',
       height: '400px',
     },
   };
@@ -38,25 +37,9 @@ function TopPage() {
             </Card>
           </Grid>
 
-          {/* 下段のカード 2枚 */}
-          <Grid item xs={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h5">商品データの編集</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h5">発注コメント</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Container>
-    </div>
-  );
+            </div>
+        </>
+    )
 }
 
-export default TopPage;
+export default toppage

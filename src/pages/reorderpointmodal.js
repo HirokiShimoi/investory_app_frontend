@@ -1,31 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-import { useState } from 'react'
-
-export const ReorderPointModal = ({ isOpen, closeModal,updateReorderPoint }) => {
-
-    const [ newReorderPoint, setNewReorderPoint] = useState(null);
-
-    const handleSubmit = () => {
-        updateReorderPoint(newReorderPoint);
-        closeModal();
-    };
-    return (
-        <div>
-            isOpen? (
-                <div className='modal'>
-                    <div className='modal-content'>
-                        <h2>発注点を変更</h2>
-                        <input type='number'/>
-                    </div>
-                </div>
-            )
-        </div>
-    )
-}
-
-export default ReorderPointModal
-=======
 import React from "react";
 import { useState } from "react";
 import '../css/style.css';
@@ -36,7 +8,7 @@ function ReorderPointModal({ isOpen, closeModal, updateReorderPoint,selectedItem
   
     const handleSubmit = () => {
 
-        axios.put(`http://127.0.0.1:8000/api/inventory/update/${selectedItem.product_code}/`,{
+        axios.put(`http://127.0.0.1:8000/api/inventory/update/${selectedItem}/`,{
             reorder_point: newReorderPoint
         })
         .then(response => {
@@ -70,4 +42,3 @@ function ReorderPointModal({ isOpen, closeModal, updateReorderPoint,selectedItem
   }
 
   export default ReorderPointModal
->>>>>>> 8ff66d6b3a8c22d115482398392661ea9896e6f6

@@ -42,11 +42,13 @@ function UnderOrderPoint() {
         {field: 'product_code', headerName: 'インストア', flex: 1 },
         {field: 'product_name', headerName: '商品名', flex: 2 },
         {field: 'inventory', headerName: '在庫', flex: 1 },
-        {field: 'orderpoint', headerName: '発注点', flex: 1, renderCell: (params) => {
-        const openModal = (params) => {
+        {field: 'orderpoint', headerName: '発注点', flex: 1, 
+        renderCell: (params) => {
+        const openModal = () => {
             console.log(params)
             if (params.row) {
                 setSelectedItem(params.row.product_code);
+                console.log(selectedItem)
                 setModalIsOpen(true);
             } else {
                 console.warn('params.row is undefined');

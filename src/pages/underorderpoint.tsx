@@ -8,14 +8,11 @@ function UnderOrderPoint() {
     const [data,setData] = useState<GridRowsProp>([]);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState("");
+    const [ currentPage, setcurrentPage ] = useState(1);
 
-    const updateReorderPoint = (newReorderPoint) => {
-        // APIを呼び出して発注点を更新するロジック
-        console.log(`新しい発注点: ${newReorderPoint}`);
-    }
 
     useEffect(() => {
-        fetch('http://127.0.0.1:8000/api/inventory/reorder/')
+        fetch(`http://127.0.0.1:8000/api/inventory/reorder/?page=${currentPage}`)
         .then(response => {
             if (!response.ok){
                 throw new Error('Network response was not ok');
@@ -35,8 +32,9 @@ function UnderOrderPoint() {
         })
 
         .catch(error => {
-          console.error('Fetch error:', error);        });
-    },[]);
+          console.error('Fetch error:', error);        
+        });
+    },[currentPage]);
 
     const columns: GridColDef[] = [
         {field: 'product_code', headerName: 'インストア', flex: 1 },
@@ -67,6 +65,11 @@ function UnderOrderPoint() {
         },  
     ]
 
+    const handlePageChange = (newPage) => {
+        setcurrentPage(newPage)
+    }
+
+
     return (
         <div style={{ height: '100vh', width: '100%' }}>
             <DataGrid 
@@ -78,9 +81,11 @@ function UnderOrderPoint() {
             <ReorderPointModal
                 isOpen={modalIsOpen}
                 closeModal={() => setModalIsOpen(false)}
-                updateReorderPoint={updateReorderPoint}
                 selectedItem = {selectedItem}
             />
+
+            <button onClick={() => handlePageChange(currentPage - 1)}>前へ</button>
+            <button onClick={() => handlePageChange(currentPage + 1)}>次へ</button>
         </div>
     )
 }

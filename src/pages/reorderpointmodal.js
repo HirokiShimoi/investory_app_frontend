@@ -8,7 +8,7 @@ function ReorderPointModal({ isOpen, closeModal, updateReorderPoint,selectedItem
   
     const handleSubmit = () => {
 
-        axios.put(`http://127.0.0.1:8000/api/inventory/update/${selectedItem}/`,{
+        axios.patch(`http://127.0.0.1:8000/api/orderline/${selectedItem}/`,{
             reorder_point: newReorderPoint
         })
         .then(response => {

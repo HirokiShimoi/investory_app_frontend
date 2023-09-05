@@ -3,7 +3,7 @@ import { useState } from "react";
 import '../css/style.css';
 import axios from "axios";
 
-function ReorderPointModal({ isOpen, closeModal, updateReorderPoint,selectedItem }) {
+function ReorderPointModal({ isOpen, closeModal,selectedItem }) {
     const [newReorderPoint, setNewReorderPoint] = useState("");
   
     const handleSubmit = () => {

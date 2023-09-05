@@ -2,6 +2,7 @@ import React from 'react'
 import { useEffect,useState } from 'react'
 import { DataGrid, GridColDef, GridRowsProp, GridValueGetterParams } from '@mui/x-data-grid';
 import ReorderPointModal from './reorderpointmodal';
+import {Tabs, Tab} from '@mui/material';
 
 function UnderOrderPoint() {
 
@@ -9,6 +10,7 @@ function UnderOrderPoint() {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState("");
     const [ currentPage, setcurrentPage ] = useState(1);
+    const [value, setvalue] = useState(0);
 
 
     useEffect(() => {
@@ -69,9 +71,23 @@ function UnderOrderPoint() {
         setcurrentPage(newPage)
     }
 
+    const handleChange = (event,newValue) => {
+        setvalue(newValue)
+    }
+
 
     return (
         <div style={{ height: '100vh', width: '100%' }}>
+            <Tabs value={value} onChange={handleChange}>
+                <Tab label="日本酒"/>
+                <Tab label="焼酎"/>
+                <Tab label="ワイン"/>
+                <Tab label="リキュール"/>
+                <Tab label="ビール"/>
+                <Tab label="スピリッツ"/>
+                <Tab label="名産品"/>
+                <Tab label="備品"/>                
+            </Tabs>
             <DataGrid 
                  rows={data}
                  columns={columns}

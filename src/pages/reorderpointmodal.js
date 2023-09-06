@@ -18,7 +18,6 @@ function ReorderPointModal({ isOpen, closeModal,selectedItem }) {
             console.log('ERROR',error)
         });
 
-        updateReorderPoint(newReorderPoint);
         closeModal();
     };
 

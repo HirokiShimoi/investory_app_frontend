@@ -1,20 +1,24 @@
 import React from 'react'
-import { useEffect,useState } from 'react'
+import { useEffect,useState,useContext } from 'react'
 import { DataGrid, GridColDef, GridRowsProp, GridValueGetterParams } from '@mui/x-data-grid';
 import ReorderPointModal from './reorderpointmodal';
 import {Tabs, Tab} from '@mui/material';
+import { SelectedRowsContext } from '../context/selectcontext'
+import axios from "axios";
 
 function UnderOrderPoint() {
 
     const [data,setData] = useState<GridRowsProp>([]);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState("");
-    const [ currentPage, setcurrentPage ] = useState(1);
+    const [currentPage, setcurrentPage] = useState(1);
     const [value, setvalue] = useState(0);
+    const [category, setCategory] = useState('日本酒');
+    const {selectedRows, setSelectedRows} = useContext(SelectedRowsContext)
 
 
     useEffect(() => {
-        fetch(`http://127.0.0.1:8000/api/inventory/reorder/?page=${currentPage}`)
+        fetch(`http://127.0.0.1:8000/api/inventory/reorder/?page=${currentPage}&category=${category}`)
         .then(response => {
             if (!response.ok){
                 throw new Error('Network response was not ok');
@@ -36,7 +40,7 @@ function UnderOrderPoint() {
         .catch(error => {
           console.error('Fetch error:', error);        
         });
-    },[currentPage]);
+    },[currentPage,category]);
 
     const columns: GridColDef[] = [
         {field: 'product_code', headerName: 'インストア', flex: 1 },
@@ -71,9 +75,33 @@ function UnderOrderPoint() {
         setcurrentPage(newPage)
     }
 
+    const tabLabels = ["日本酒", "焼酎", "ワイン", "リキュール", "ビール", "スピリッツ", "ノンアルコール", "調味料", "備品"];
+
     const handleChange = (event,newValue) => {
+        console.log(event)
         setvalue(newValue)
+        setCategory(tabLabels[newValue])
     }
+
+    const handleRowSelection = (newSelection) => {
+
+        const selectData = data.filter((row) => newSelection.includes(row.id));
+        setSelectedRows(selectData);
+    };
+    
+    const newSelectedRows = selectedRows.map(({ id, ...rest }) => rest);
+
+    const handleAddToDatabase = () => {
+        newSelectedRows.forEach(row => {
+            axios.post('http://127.0.0.1:8000/api/selecteditem/', row)
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    };
 
 
     return (
@@ -85,7 +113,8 @@ function UnderOrderPoint() {
                 <Tab label="リキュール"/>
                 <Tab label="ビール"/>
                 <Tab label="スピリッツ"/>
-                <Tab label="名産品"/>
+                <Tab label="ノンアルコール"/>
+                <Tab label="調味料"/>
                 <Tab label="備品"/>                
             </Tabs>
             <DataGrid 
@@ -93,6 +122,7 @@ function UnderOrderPoint() {
                  columns={columns}
                  pageSizeOptions={[5, 10]}
                  checkboxSelection
+                 onRowSelectionModelChange={(sewSelection) => handleRowSelection(sewSelection)}
             />
             <ReorderPointModal
                 isOpen={modalIsOpen}
@@ -102,6 +132,7 @@ function UnderOrderPoint() {
 
             <button onClick={() => handlePageChange(currentPage - 1)}>前へ</button>
             <button onClick={() => handlePageChange(currentPage + 1)}>次へ</button>
+            <button onClick={handleAddToDatabase}>チェックリストに追加</button>
         </div>
     )
 }

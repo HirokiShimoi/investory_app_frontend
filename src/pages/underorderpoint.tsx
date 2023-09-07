@@ -2,6 +2,7 @@ import React from 'react'
 import { useEffect,useState,useContext } from 'react'
 import { DataGrid, GridColDef, GridRowsProp, GridValueGetterParams } from '@mui/x-data-grid';
 import ReorderPointModal from './reorderpointmodal';
+import CommentModal from './commentmodal';
 import {Tabs, Tab} from '@mui/material';
 import { SelectedRowsContext } from '../context/selectcontext'
 import axios from "axios";
@@ -10,6 +11,7 @@ function UnderOrderPoint() {
 
     const [data,setData] = useState<GridRowsProp>([]);
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [commentmodalIsOpen, setCommentModalIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState("");
     const [currentPage, setcurrentPage] = useState(1);
     const [value, setvalue] = useState(0);
@@ -68,6 +70,30 @@ function UnderOrderPoint() {
               </div>
             );
           },
+        },
+        {
+            field: 'comment', 
+            headerName: 'コメント', 
+            flex: 1,
+            renderCell: (params) => {
+                const openCommentModal = () => {
+                    if (params.row) {
+                        setSelectedItem(params.row.product_code);
+                        console.log(selectedItem)
+                        setCommentModalIsOpen(true);
+                    } else {
+                        console.warn('params.row is undefined');
+                    }
+                };
+          
+                return (
+                    <div>
+                        <button onClick={openCommentModal}>
+                            コメントを追加
+                        </button>
+                    </div>
+                );
+            },
         },  
     ]
 
@@ -127,6 +153,11 @@ function UnderOrderPoint() {
             <ReorderPointModal
                 isOpen={modalIsOpen}
                 closeModal={() => setModalIsOpen(false)}
+                selectedItem = {selectedItem}
+            />
+            <CommentModal
+                isOpen={commentmodalIsOpen}
+                closeModal={() => setCommentModalIsOpen(false)}
                 selectedItem = {selectedItem}
             />
 

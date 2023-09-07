@@ -129,7 +129,7 @@ function UnderOrderPoint() {
                 closeModal={() => setModalIsOpen(false)}
                 selectedItem = {selectedItem}
             />
-
+            <div></div>
             <button onClick={() => handlePageChange(currentPage - 1)}>前へ</button>
             <button onClick={() => handlePageChange(currentPage + 1)}>次へ</button>
             <button onClick={handleAddToDatabase}>チェックリストに追加</button>

@@ -1,4 +1,3 @@
-import React from "react";
 import { useState } from "react";
 import '../css/style.css';
 import axios from "axios";

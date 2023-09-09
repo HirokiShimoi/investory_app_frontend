@@ -20,6 +20,7 @@ type Product = {
 function CheckedItem() {
     const [selectedData, setSelectedData] = useState<GridRowsProp>([]);
     const [comments, setComments] = useState<Comment[]>([]);
+    const [selectedRows,setSelectedRows] = useState<any[]>([]);
 
     const mergeProductAndComments = (products: Product[], comments: Comment[]) => {
         return products.map(product => {
@@ -54,17 +55,33 @@ function CheckedItem() {
           })
           .catch(error => {
             console.error('Error fetching data:', error);
-            // Here you can handle the error more gracefully
           });
       }, []);
 
+    const handleDelete = () => {
+        axios.post('http://127.0.0.1:8000/api/deleteItems/',{
+            ids: selectedRows
+        }).then(() => {
+            const updateData = selectedData.filter(item => !selectedRows.includes(item.id));
+            setSelectedData(updateData);
+            setSelectedRows([]);
+        }).catch((error => {
+            console.log('Delete failed:', error);
+        }))
+    }
+
+    const handleRowSelectionModelChange = (newSelection) => {
+        setSelectedRows(newSelection);
+        console.log(newSelection)
+
+    };
 
     const columns : GridColDef[] = [
         {field: 'product_code', headerName: 'インストア', flex: 1 },
         {field: 'product_name', headerName: '商品名', flex: 2 },
         {field: 'inventory', headerName: '在庫', flex: 1 },
         {field: 'orderpoint', headerName: '発注点', flex:1 },
-        { field: 'comment', headerName: 'コメント', flex: 1 },
+        {field: 'comment', headerName: 'コメント', flex: 1 },
     ]
 
     return (
@@ -74,7 +91,12 @@ function CheckedItem() {
                  columns={columns}
                  pageSizeOptions={[5, 10]}
                  checkboxSelection
+                 onRowSelectionModelChange={handleRowSelectionModelChange}
             />
+
+            <Button variant='contained' color="secondary" onClick={handleDelete}>
+                delete Selected
+            </Button>
         </div>
     )
 }

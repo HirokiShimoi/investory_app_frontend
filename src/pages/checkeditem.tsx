@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { DataGrid, GridColDef, GridRowsProp, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowsProp, GridValueGetterParams, roRO } from '@mui/x-data-grid';
 import {Tabs, Tab} from '@mui/material';
 import Button from '@mui/material/Button';
 
@@ -59,22 +59,31 @@ function CheckedItem() {
       }, []);
 
     const handleDelete = () => {
-        axios.post('http://127.0.0.1:8000/api/deleteItems/',{
-            ids: selectedRows
-        }).then(() => {
+        const deleteProductId = selectedRows.map(row => row.id);
+        axios.delete('http://127.0.0.1:8000/api/selecteditem/',{
+            data: {ids:deleteProductId}
+        })
+        .then(() => {
             const updateData = selectedData.filter(item => !selectedRows.includes(item.id));
             setSelectedData(updateData);
             setSelectedRows([]);
-        }).catch((error => {
+        })
+        .catch((error => {
             console.log('Delete failed:', error);
         }))
     }
 
     const handleRowSelectionModelChange = (newSelection) => {
-        setSelectedRows(newSelection);
-        console.log(newSelection)
-
+        console.log("newSelection: ", newSelection);
+        const rowSelectdata = selectedData.filter((row) => newSelection.includes(row.id));
+        setSelectedRows(rowSelectdata);
     };
+
+
+
+    useEffect(() => {
+      console.log(selectedRows);
+    }, [selectedRows]);
 
     const columns : GridColDef[] = [
         {field: 'product_code', headerName: 'インストア', flex: 1 },

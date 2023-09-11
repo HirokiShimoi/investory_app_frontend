@@ -13,7 +13,7 @@ type Product = {
     orderpoint: number;
   };
   
-  type Comment = {
+type Comment = {
     product: Product;
   };
 
@@ -24,42 +24,45 @@ function CheckedItem() {
 
     const mergeProductAndComments = (products: Product[], comments: Comment[]) => {
         return products.map(product => {
-          const relatedComment = comments.find(comment => comment.product.product_code === product.product_code);
-          return {
-            ...product,
-            comment: relatedComment ? 'コメントあり' : 'コメントなし',
-          };
+          	console.log('Checking product:', product); 
+          	const relatedComment = comments.find(comment => comment.product === product.product_code);
+          	console.log("relatedComment: ", relatedComment);  // Debug line
+          	return {
+          	  	...product,
+          	  	comment: relatedComment ? 'コメントあり' : 'コメントなし',
+          	};
         });
-      };
+    };
 
 
     useEffect(() => {
         const fetchSelectedData = axios.get('http://127.0.0.1:8000/api/selecteditem/');
         const fetchComments = axios.get('http://127.0.0.1:8000/api/comment/');
-    
         Promise.all([fetchSelectedData, fetchComments])
-          .then(([selectedDataRes, commentsRes]) => {
-            const transformedData: Product[] = selectedDataRes.data.map((item: Product) => {
-              return {
-                id: item.id,
-                product_code: item.product_code,
-                product_name: item.product_name,
-                inventory: item.inventory,
-                category: item.category,
-                orderpoint: item.orderpoint,
-              };
-            });
+          	.then(([selectedDataRes, commentsRes]) => {
+            	console.log("Fetched data and comments: ", selectedDataRes.data, commentsRes.data); // この行を追加
+            	const transformedData: Product[] = selectedDataRes.data.map((item: Product) => {
+            	 	return {
+            	    	id: item.id,
+            	    	product_code: item.product_code,
+            	    	product_name: item.product_name,
+            	    	inventory: item.inventory,
+            	    	category: item.category,
+            	    	orderpoint: item.orderpoint,
+            		};
+            	});
             setComments(commentsRes.data);
             const mergedData = mergeProductAndComments(transformedData, commentsRes.data);
             setSelectedData(mergedData);
-          })
-          .catch(error => {
-            console.error('Error fetching data:', error);
-          });
+            console.log('Comments data:', commentsRes.data);
+          	})	
+          	.catch(error => {
+            	console.error('Error fetching data:', error);
+          	});
       }, []);
 
     const handleDelete = () => {
-        const deleteProductId = selectedRows.map(row => row.id);
+        const deleteProductId = selectedRows.map(row => row.product_code);
         axios.delete('http://127.0.0.1:8000/api/selecteditem/',{
             data: {ids:deleteProductId}
         })
@@ -82,7 +85,7 @@ function CheckedItem() {
 
 
     useEffect(() => {
-      console.log(selectedRows);
+      	console.log(selectedRows);
     }, [selectedRows]);
 
     const columns : GridColDef[] = [

@@ -160,6 +160,7 @@ function UnderOrderPoint() {
                 isOpen={commentmodalIsOpen}
                 closeModal={() => setCommentModalIsOpen(false)}
                 selectedItem = {selectedItem}
+                selectcomments= {null}
             />
             <button onClick={() => handlePageChange(currentPage - 1)}>前へ</button>
             <button onClick={() => handlePageChange(currentPage + 1)}>次へ</button>

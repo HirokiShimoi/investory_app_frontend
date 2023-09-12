@@ -1,7 +1,6 @@
-import { useState,useEffect } from "react";
+import React,{ useState,useEffect } from "react";
 import '../css/style.css';
 import axios from "axios";
-
 
 const CommentModal = ({isOpen, closeModal,selectedItem,selectcomments}) => {
     console.log("Received selectcomments: ", selectcomments); 

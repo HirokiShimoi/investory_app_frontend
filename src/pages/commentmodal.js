@@ -1,10 +1,17 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import '../css/style.css';
 import axios from "axios";
 
 
-const CommentModal = ({isOpen, closeModal,selectedItem}) => {
-    const [comment,setComment] = useState("");
+const CommentModal = ({isOpen, closeModal,selectedItem,selectcomments}) => {
+    console.log("Received selectcomments: ", selectcomments); 
+    const [comment,setComment] = useState(selectcomments || "");
+    
+    useEffect(() => {
+        console.log("Received selectcomments: ", selectcomments);  
+        setComment(selectcomments || "");
+    },[selectcomments]);
+
     const handlesubmit = () => {
         console.log(selectedItem);
         axios.post('http://127.0.0.1:8000/api/comment/',{

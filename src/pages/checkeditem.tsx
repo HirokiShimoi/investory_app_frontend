@@ -3,10 +3,11 @@ import axios from 'axios';
 import { DataGrid, GridColDef, GridRowsProp, GridValueGetterParams, roRO } from '@mui/x-data-grid';
 import {Tabs, Tab} from '@mui/material';
 import Button from '@mui/material/Button';
+import CommentModal from './commentmodal';
 
 type Product = {
     id: number;
-    product_code: string;
+    product_code: number;
     product_name: string;
     inventory: number;
     category: string;
@@ -14,19 +15,24 @@ type Product = {
   };
   
 type Comment = {
-    product: Product;
+  id: number;
+  text: string;
+  created_at: string;
+  product: number; 
   };
 
 function CheckedItem() {
     const [selectedData, setSelectedData] = useState<GridRowsProp>([]);
     const [comments, setComments] = useState<Comment[]>([]);
     const [selectedRows,setSelectedRows] = useState<any[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<Product | null>(null);
+    const [selectedComment, setSelectedComment] = useState<string | null>(null);
 
     const mergeProductAndComments = (products: Product[], comments: Comment[]) => {
         return products.map(product => {
-          	console.log('Checking product:', product); 
           	const relatedComment = comments.find(comment => comment.product === product.product_code);
-          	console.log("relatedComment: ", relatedComment);  // Debug line
+            console.log(comments)
           	return {
           	  	...product,
           	  	comment: relatedComment ? 'コメントあり' : 'コメントなし',
@@ -61,6 +67,22 @@ function CheckedItem() {
           	});
       }, []);
 
+      useEffect(() => {
+        if (selectedItem) {
+            const relatedComment = comments.find(comment => comment.product === selectedItem.product_code);
+            if (relatedComment) {
+                setSelectedComment(relatedComment.text);  // 仮にコメントがtextフィールドに保存されているとします。
+                console.log('Setting selectedComment:', relatedComment.text); // 追加
+            } else {
+                setSelectedComment(null);
+            }
+        }
+    }, [selectedItem, comments]);
+
+    useEffect(() => {
+      console.log("Updated selectedComment is: ", selectedComment);
+  }, [selectedComment]);
+
     const handleDelete = () => {
         const deleteProductId = selectedRows.map(row => row.product_code);
         axios.delete('http://127.0.0.1:8000/api/selecteditem/',{
@@ -82,18 +104,23 @@ function CheckedItem() {
         setSelectedRows(rowSelectdata);
     };
 
-
-
-    useEffect(() => {
-      	console.log(selectedRows);
-    }, [selectedRows]);
-
     const columns : GridColDef[] = [
         {field: 'product_code', headerName: 'インストア', flex: 1 },
         {field: 'product_name', headerName: '商品名', flex: 2 },
         {field: 'inventory', headerName: '在庫', flex: 1 },
         {field: 'orderpoint', headerName: '発注点', flex:1 },
-        {field: 'comment', headerName: 'コメント', flex: 1 },
+        {field: 'comment', headerName: 'コメント', flex: 1, renderCell: (params) => {
+          const commentData = params.row.comment;
+          return (
+            <span onClick={() => {
+              setSelectedItem(params.row);
+              setIsModalOpen(true);
+              console.log(params.row)
+            }}>
+              {commentData}
+            </span>
+          )
+        }},
     ]
 
     return (
@@ -109,6 +136,7 @@ function CheckedItem() {
             <Button variant='contained' color="secondary" onClick={handleDelete}>
                 delete Selected
             </Button>
+            <CommentModal isOpen={isModalOpen} closeModal={() => setIsModalOpen(false)} selectedItem={selectedItem} selectcomments={selectedComment}/>
         </div>
     )
 }

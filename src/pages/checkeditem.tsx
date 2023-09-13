@@ -3,7 +3,7 @@ import axios from 'axios';
 import { DataGrid, GridColDef, GridRowsProp, GridValueGetterParams, roRO } from '@mui/x-data-grid';
 import {Tabs, Tab} from '@mui/material';
 import Button from '@mui/material/Button';
-import CommentModal from './commentmodal.tsx';
+import CommentModal from './commentmodal';
 
 type Product = {
     id: number;
@@ -98,7 +98,7 @@ function CheckedItem() {
         }))
     }
 
-    const handleRowSelectionModelChange = (newSelection) => {
+    const handleRowSelectionModelChange = (newSelection:any) => {
         console.log("newSelection: ", newSelection);
         const rowSelectdata = selectedData.filter((row) => newSelection.includes(row.id));
         setSelectedRows(rowSelectdata);

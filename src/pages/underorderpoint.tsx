@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect,useState,useContext } from 'react'
 import { DataGrid, GridColDef, GridRowsProp, GridValueGetterParams } from '@mui/x-data-grid';
 import ReorderPointModal from './reorderpointmodal';
-import CommentModal from './commentmodal.tsx';
+import CommentModal  from './commentmodal.tsx';
 import {Tabs, Tab} from '@mui/material';
 import { SelectedRowsContext } from '../context/selectcontext'
 import axios from "axios";

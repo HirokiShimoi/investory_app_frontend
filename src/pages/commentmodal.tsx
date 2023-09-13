@@ -45,4 +45,4 @@ const CommentModal = ({isOpen, closeModal,selectedItem,selectcomments}) => {
 }
 
 
-export default CommentModal;
+export default CommentModal

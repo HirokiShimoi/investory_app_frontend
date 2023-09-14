@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect,useState,useContext } from 'react'
 import { DataGrid, GridColDef, GridRowsProp, GridValueGetterParams } from '@mui/x-data-grid';
 import ReorderPointModal from './reorderpointmodal';
-import CommentModal  from './commentmodal.tsx';
+import CommentModal from './commentmodal';
 import {Tabs, Tab} from '@mui/material';
 import { SelectedRowsContext } from '../context/selectcontext'
 import axios from "axios";
@@ -16,7 +16,7 @@ function UnderOrderPoint() {
     const [currentPage, setcurrentPage] = useState(1);
     const [value, setvalue] = useState(0);
     const [category, setCategory] = useState('日本酒');
-    const {selectedRows, setSelectedRows} = useContext(SelectedRowsContext)
+    const {selectedRows, setSelectedRows} = useContext<any>(SelectedRowsContext)
 
 
     useEffect(() => {

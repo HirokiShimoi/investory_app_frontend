@@ -2,6 +2,7 @@ import './App.css';
 import Login from './pages/login';
 import TopPage from './pages/toppage';
 import TodoForm from './pages/todo';
+import Search from './pages/search';
 import CheckedItem from './pages/checkeditem.tsx';
 import { AuthProvider } from './context/authcontext';
 import { SelectedRowsProvider } from './context/selectcontext';
@@ -22,6 +23,7 @@ function App() {
                     <Route path="/under_orderpoint/" element= {<UnderOrderPoint/>}/>
                     <Route path="/checked_item/" element= {<CheckedItem/>}/>
                     <Route path="/todo/" element= {<TodoForm/>}/>
+                    <Route path="/search/" element= {<Search/>}/>
                 </Routes>
             </Router>
             </SelectedRowsProvider>

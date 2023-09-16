@@ -1,9 +1,11 @@
-import { TextField, Button, Container, Grid, Typography } from '@mui/material';
+import { TextField, Button, Container, Grid, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper  } from '@mui/material';
 import React, { useState,useEffect } from 'react';
+import axios from 'axios';
 
 function Search() {
     const [storeNumber, setStoreNumber] = useState('');
     const [keyword, setKeyword] = useState('');
+    const [results, setResults] = useState([])
 
     const handleStoreNumberChange = (e) => {
         setStoreNumber(e.target.value)
@@ -14,9 +16,29 @@ function Search() {
     };
 
     const handleSearch = () => {
-        console.log(`Searching with store number: ${storeNumber}, keyword: ${keyword}`);
-        // API call or other actions here
+        if (keyword) {
+            console.log(keyword)
+            axios.get(`http://127.0.0.1:8000/api/products/?keyword=${keyword}`)
+            .then(response => {
+              console.log(response.data);
+              setResults(response.data.results)
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        }
+        if (storeNumber) {
+          axios.get(`http://127.0.0.1:8000/api/products/${storeNumber}/`)
+            .then(response => {
+              console.log(response.data);
+              setResults(Array.isArray(response.data) ? response.data : [response.data]);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        }
       };
+      
 
     return (
         <Container>
@@ -38,6 +60,30 @@ function Search() {
                     </Grid>
                 </Grid>
             </form>
+            <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Name</TableCell>
+                        <TableCell align="right">Product Code</TableCell>
+                        <TableCell align="right">Category</TableCell>
+                        <TableCell align="right">Is Active</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {Array.isArray(results) && results.map((item, index) => (
+                        <TableRow key={index}>
+                            <TableCell component="th" scope="row">
+                                {item.name}
+                            </TableCell>
+                            <TableCell align="right">{item.product_code}</TableCell>
+                            <TableCell align="right">{item.category}</TableCell>
+                            <TableCell align="right">{item.is_active ? 'Active' : 'Inactive'}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
         </Container>
     )
 }

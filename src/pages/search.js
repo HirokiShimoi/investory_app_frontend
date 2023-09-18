@@ -38,6 +38,23 @@ function Search() {
             });
         }
       };
+    
+    
+    const toggleIsActive = (id,currentState) => {
+        axios.post(`http://127.0.0.1:8000/api/products/toggle/${id}/`)
+        .then(response => {
+           // 成功した場合、フロントエンドの状態も更新
+            setResults(results.map(item => {
+                if (item.id === id) {
+                    return {...item, is_active: !currentState};
+                }   
+                return item;
+            }));
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
       
 
     return (
@@ -78,7 +95,8 @@ function Search() {
                             </TableCell>
                             <TableCell align="right">{item.product_code}</TableCell>
                             <TableCell align="right">{item.category}</TableCell>
-                            <TableCell align="right">{item.is_active ? 'Active' : 'Inactive'}</TableCell>
+                            <TableCell align="right">{item.is_active ? 'Active' : 'Inactive'}<Button onClick={(item.id,item.is_active)}>Toggle</Button>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

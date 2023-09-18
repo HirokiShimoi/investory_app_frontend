@@ -40,16 +40,19 @@ function Search() {
       };
     
     
-    const toggleIsActive = (id,currentState) => {
-        axios.post(`http://127.0.0.1:8000/api/products/toggle/${id}/`)
+    const toggleIsActive = (product_code,currentState) => {
+        
+        console.log("Toggling for ID:", product_code);
+        console.log("Toggling for ID:", currentState);
+        axios.put(`http://127.0.0.1:8000/api/products/is_active/${product_code}/`,{is_active: !currentState})
         .then(response => {
-           // 成功した場合、フロントエンドの状態も更新
             setResults(results.map(item => {
-                if (item.id === id) {
+                if (item.product_code === product_code) {
                     return {...item, is_active: !currentState};
                 }   
                 return item;
             }));
+
         })
         .catch(error => {
           console.log(error);
@@ -95,7 +98,7 @@ function Search() {
                             </TableCell>
                             <TableCell align="right">{item.product_code}</TableCell>
                             <TableCell align="right">{item.category}</TableCell>
-                            <TableCell align="right">{item.is_active ? 'Active' : 'Inactive'}<Button onClick={(item.id,item.is_active)}>Toggle</Button>
+                            <TableCell align="right">{item.is_active ? 'Active' : 'Inactive'}<Button onClick={() => toggleIsActive(item.product_code, item.is_active)}>Toggle</Button>
                             </TableCell>
                         </TableRow>
                     ))}

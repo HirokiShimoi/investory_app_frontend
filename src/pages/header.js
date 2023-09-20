@@ -1,41 +1,100 @@
-import React, { useContext } from 'react'
-import { useNavigate } from 'react-router';
-import { AuthContext } from '../context/authcontext'
-import kagimoto from '../image/kagimoto.png'
+import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import { ListItemIcon } from '@mui/material';
+import HomeIcon from '@mui/icons-material/Home';
+import UpdateIcon from '@mui/icons-material/Update';
+import SearchIcon from '@mui/icons-material/Search';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
+import { useNavigate } from 'react-router-dom';
+import ListItemButton from '@mui/material/ListItemButton';
+import Divider from '@mui/material/Divider';
 
-function Header() {
-    const { login, setLogin, user, setUser} = useContext(AuthContext);
+export default function ButtonAppBar() {
+
+    const [drawerOpen, setDrawerOpen] = React.useState(false);
     const navigate = useNavigate();
 
-    const login_btn = (e) => {
-        e.preventDefault();
-        navigate("/")
+    const toggleDrawer = (open) => (event) => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+          }
+        setDrawerOpen(open);
     }
 
-    const logout_btn = (event) => {
-        if(window.confirm('ログアウトしますか？')) {
-            setLogin(false);
-            setUser?.(null);
-            localStorage.removeItem('token')
-        }
-    };
-    return (
-        <header className='other-header'>
-            <nav>
-                <div className='container-fluid d-flex justify-content-between'>
-                    <img src={kagimoto} alt="logo" width="250" className="d-inline-block align-text-top other-header-logo"/>
-                </div>
-                <div>
-                    <span>ユーザー名: {user ? user.user : 'Loading...'}</span>
-                    {login ?(
-                        <button className="btn btn-primary m-2 edit-button" onClick={logout_btn}>ログアウト</button>
-                    ) : (
-                        <button className="btn btn-primary m-2 edit-button" onClick={login_btn}>ログイン</button>
-                    )}    
-                </div>
-            </nav>
-        </header>
-    )
-}
+    const handleNavigation = (route) => {
+        toggleDrawer(false);
+        navigate(route)
+    }
 
-export default Header
+    return (
+        <Box sx={{ flexGrow: 1 }}>
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={toggleDrawer(true)}>
+                        <MenuIcon />
+                    </IconButton>
+                    <Drawer open={drawerOpen} onClose={toggleDrawer(false)}>
+                        <List>
+                            <ListItemButton onClick={() => handleNavigation('/admin/')}>
+                                <ListItemIcon>
+                                    <HomeIcon />
+                                </ListItemIcon>
+                                TOPPAGE
+                            </ListItemButton>
+                            <Divider />
+                            <ListItemButton onClick={() => handleNavigation('/inventory_update/')}>
+                                <ListItemIcon>
+                                    <UpdateIcon />
+                                </ListItemIcon>
+                                在庫データ更新
+                            </ListItemButton>
+                            <Divider />
+                            <ListItemButton onClick={() => handleNavigation('/inventory_update/')}>
+                                <ListItemIcon>
+                                    <UpdateIcon />
+                                </ListItemIcon>
+                                商品データ更新
+                            </ListItemButton>
+                            <Divider />
+                            <ListItemButton onClick={() => handleNavigation('/search/')}>
+                                <ListItemIcon>
+                                    <SearchIcon />
+                                </ListItemIcon>
+                                商品検索＆更新
+                            </ListItemButton>
+                            <Divider />
+                            <ListItemButton onClick={() => handleNavigation('/under_orderpoint/')}>
+                                <ListItemIcon>
+                                    <ProductionQuantityLimitsIcon />
+                                </ListItemIcon>
+                                在庫が少ないアイテム
+                            </ListItemButton>
+                            <Divider />
+                            <ListItemButton onClick={() => handleNavigation('/todo/')}>
+                                <ListItemIcon>
+                                    <ListAltIcon />
+                                </ListItemIcon> 
+                                発注TODO
+                            </ListItemButton>
+                            <Divider />
+                        </List>
+                    </Drawer>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                      酒やの鍵本
+                    </Typography>
+                    <Button color="inherit">Login</Button>
+                </Toolbar>
+            </AppBar>
+        </Box>
+    );
+}

@@ -18,46 +18,52 @@ function UnderOrderPoint() {
     const [category, setCategory] = useState('日本酒');
     const {selectedRows, setSelectedRows} = useContext<any>(SelectedRowsContext)
     const [addItems, setAddItems] = useState<GridRowsProp>([]);
-
+    
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/selecteditem/')
-        .then(response => {
-            console.log(response.data);
-            setAddItems(response.data);
-            console.log(addItems);
-
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        });
-    },[]);
-
-    useEffect(() => {
-        fetch(`http://127.0.0.1:8000/api/inventory/reorder/?page=${currentPage}&category=${category}`)
-        .then(response => {
-            if (!response.ok){
-                throw new Error('Network response was not ok');
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/api/selecteditem/');
+                const newAddItems = response.data;
+                if (JSON.stringify(newAddItems) !== JSON.stringify(addItems)) {
+                    setAddItems(newAddItems);
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
             }
-            return response.json();
-        })
-        .then(data => {
-            const transformedData = data.results.map((item) => ({
-                id: item.id, 
-                product_code: item.product.product_code,
-                product_name: item.product.name,
-                inventory: item.current_stock,
-                category: item.product.category,
-                orderpoint:item.reorder_point,
-                disabled: addItems.some(addItem => addItem.product_code === item.product.product_code)
-            }));
-            setData(transformedData);
-            console.log('Transformed Data:', transformedData); 
-        })
-
-        .catch(error => {
-          console.error('Fetch error:', error);        
-        });
-    },[currentPage,category]);
+        };
+    
+        fetchData(); 
+    }, []); 
+    
+    useEffect(() => {
+        const fetchInventoryData = async () => {
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/inventory/reorder/?page=${currentPage}&category=${category}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                const transformedData = data.results.map((item) => ({
+                    id: item.id,
+                    product_code: item.product.product_code,
+                    product_name: item.product.name,
+                    inventory: item.current_stock,
+                    category: item.product.category,
+                    orderpoint: item.reorder_point,
+                    disabled: addItems.some(addItem => addItem.product_code === item.product.product_code)
+                }));
+                console.log(addItems);
+    
+                setData(transformedData);
+                console.log('Transformed Data:', transformedData);
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        };
+    
+        fetchInventoryData(); // 2番目の非同期処理を開始
+    }, [currentPage, category, addItems]); // addItems ステートが更新された際に再実行
+    
 
     const columns: GridColDef[] = [
         {field: 'product_code', headerName: 'インストア', flex: 1 },
@@ -158,12 +164,13 @@ function UnderOrderPoint() {
                 <Tab label="調味料"/>
                 <Tab label="備品"/>                
             </Tabs>
-            <DataGrid 
+            <DataGrid
                 rows={data}
                 columns={columns}
                 pageSizeOptions={[5, 10]}
                 checkboxSelection
                 onRowSelectionModelChange={(setSelection) => handleRowSelection(setSelection)}
+                isRowSelectable={(params) => !params.row.disabled}
             />
 
             <ReorderPointModal

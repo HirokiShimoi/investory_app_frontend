@@ -1,13 +1,18 @@
-import React,{ useState,useEffect } from "react";
-import '../css/style.css';
+import React, { useState, useEffect } from "react";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import axios from "axios";
 
+
 const CommentModal = ({isOpen, closeModal,selectedItem,selectcomments}) => {
-    console.log("Received selectcomments: ", selectcomments); 
     const [comment,setComment] = useState(selectcomments || "");
     
     useEffect(() => {
-        console.log("Received selectcomments: ", selectcomments);  
         setComment(selectcomments || "");
     },[selectcomments]);
 
@@ -29,17 +34,30 @@ const CommentModal = ({isOpen, closeModal,selectedItem,selectcomments}) => {
 
     return(
         <>
-            {isOpen?(
-                <div className="modal">
-                    <div className="modal-content">
-                        <textarea value={comment} onChange={(e) => setComment(e.target.value)} />
-                        <button onClick = {handlesubmit}>
-                            保存
-                        </button>
-                        <button onClick={closeModal}>キャンセル</button>
-                    </div>
-                </div>
-            ):null}
+                    <Dialog open={isOpen} onClose={closeModal}>
+            <DialogTitle>コメント</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    コメントを入力してください。
+                </DialogContentText>
+                <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    variant="outlined"
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={closeModal} color="primary">
+                    キャンセル
+                </Button>
+                <Button onClick={handlesubmit} color="primary">
+                    保存
+                </Button>
+            </DialogActions>
+        </Dialog>
         </>
     );
 }

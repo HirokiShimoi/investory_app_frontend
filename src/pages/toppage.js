@@ -85,6 +85,13 @@ const TopPage = () => {
                         </StyledCard>
                     </Grid>
                     <Grid item xs={4} style={{ width: '100%' }}>
+                        <StyledCard onClick={() => handleNavigation('/checked_item/')}>
+                            <CardContent style={contentStyle}>
+                                <Typography variant="h5">Check済みアイテム </Typography>
+                            </CardContent>
+                        </StyledCard>
+                    </Grid>
+                    <Grid item xs={4} style={{ width: '100%' }}>
                         <StyledCard onClick={() => handleNavigation('/todo/')}>
                             <CardContent style={contentStyle}>
                                 <Typography variant="h5">発注TODO </Typography>

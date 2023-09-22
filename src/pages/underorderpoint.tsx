@@ -1,9 +1,9 @@
 import React from 'react'
 import { useEffect,useState,useContext } from 'react'
-import { DataGrid, GridColDef, GridRowsProp, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowProps, GridRowsProp, GridValueGetterParams } from '@mui/x-data-grid';
 import ReorderPointModal from './reorderpointmodal';
 import CommentModal from './commentmodal';
-import {Tabs, Tab} from '@mui/material';
+import {Tabs, Tab, Button, Box} from '@mui/material';
 import { SelectedRowsContext } from '../context/selectcontext'
 import axios from "axios";
 
@@ -17,7 +17,20 @@ function UnderOrderPoint() {
     const [value, setvalue] = useState(0);
     const [category, setCategory] = useState('日本酒');
     const {selectedRows, setSelectedRows} = useContext<any>(SelectedRowsContext)
+    const [addItems, setAddItems] = useState<GridRowsProp>([]);
 
+    useEffect(() => {
+        axios.get('http://127.0.0.1:8000/api/selecteditem/')
+        .then(response => {
+            console.log(response.data);
+            setAddItems(response.data);
+            console.log(addItems);
+
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+    },[]);
 
     useEffect(() => {
         fetch(`http://127.0.0.1:8000/api/inventory/reorder/?page=${currentPage}&category=${category}`)
@@ -35,8 +48,10 @@ function UnderOrderPoint() {
                 inventory: item.current_stock,
                 category: item.product.category,
                 orderpoint:item.reorder_point,
+                disabled: addItems.some(addItem => addItem.product_code === item.product.product_code)
             }));
             setData(transformedData);
+            console.log('Transformed Data:', transformedData); 
         })
 
         .catch(error => {
@@ -131,8 +146,8 @@ function UnderOrderPoint() {
 
 
     return (
-        <div style={{ height: '100vh', width: '100%' }}>
-            <Tabs value={value} onChange={handleChange}>
+        <div style={{ height: 'calc(100vh - 120px)', width: '100%' }}>
+            <Tabs value={value} onChange={handleChange} variant="scrollable" scrollButtons="auto">
                 <Tab label="日本酒"/>
                 <Tab label="焼酎"/>
                 <Tab label="ワイン"/>
@@ -144,12 +159,13 @@ function UnderOrderPoint() {
                 <Tab label="備品"/>                
             </Tabs>
             <DataGrid 
-                 rows={data}
-                 columns={columns}
-                 pageSizeOptions={[5, 10]}
-                 checkboxSelection
-                 onRowSelectionModelChange={(sewSelection) => handleRowSelection(sewSelection)}
+                rows={data}
+                columns={columns}
+                pageSizeOptions={[5, 10]}
+                checkboxSelection
+                onRowSelectionModelChange={(setSelection) => handleRowSelection(setSelection)}
             />
+
             <ReorderPointModal
                 isOpen={modalIsOpen}
                 closeModal={() => setModalIsOpen(false)}
@@ -162,9 +178,19 @@ function UnderOrderPoint() {
                 selectedItem = {selectedItem}
                 selectcomments= {null}
             />
-            <button onClick={() => handlePageChange(currentPage - 1)}>前へ</button>
-            <button onClick={() => handlePageChange(currentPage + 1)}>次へ</button>
-            <button onClick={handleAddToDatabase}>チェックリストに追加</button>
+            <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
+                <Button variant="contained" color="primary" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1}>
+                    前へ
+                </Button>
+                <Box mx={1}></Box>
+                <Button variant="contained" color="primary" onClick={() => handlePageChange(currentPage + 1)}>
+                    次へ
+                </Button>
+                <Box mx={1}></Box>
+                <Button variant="contained" color="primary" onClick={handleAddToDatabase}>
+                    チェックリストに追加
+                </Button>
+            </Box>
         </div>
     )
 }

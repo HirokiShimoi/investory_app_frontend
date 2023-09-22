@@ -80,6 +80,13 @@ export default function ButtonAppBar() {
                                 在庫が少ないアイテム
                             </ListItemButton>
                             <Divider />
+                            <ListItemButton onClick={() => handleNavigation('/checked_item/')}>
+                                <ListItemIcon>
+                                    <ProductionQuantityLimitsIcon />
+                                </ListItemIcon>
+                                チェックしたアイテム
+                            </ListItemButton>
+                            <Divider />
                             <ListItemButton onClick={() => handleNavigation('/todo/')}>
                                 <ListItemIcon>
                                     <ListAltIcon />

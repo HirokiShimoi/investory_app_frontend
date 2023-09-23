@@ -6,6 +6,8 @@ import CommentModal from './commentmodal';
 import {Tabs, Tab, Button, Box} from '@mui/material';
 import { SelectedRowsContext } from '../context/selectcontext'
 import axios from "axios";
+import CommentIcon from '@mui/icons-material/Comment';
+
 
 function UnderOrderPoint() {
 
@@ -18,6 +20,17 @@ function UnderOrderPoint() {
     const [category, setCategory] = useState('日本酒');
     const {selectedRows, setSelectedRows} = useContext<any>(SelectedRowsContext)
     const [addItems, setAddItems] = useState<GridRowsProp>([]);
+    const [comments, setComments] = useState([]);
+
+    const mergeProductAndComments = (products,comments) => {
+        return products.map(product => {
+            const relatedComment = comments.find(comment => comment.product === product.product_code);
+            return {
+                ...product,
+                comment: relatedComment ? 'コメントあり' : 'コメントなし',
+            };
+        });
+    };
     
     useEffect(() => {
         const fetchData = async () => {
@@ -43,6 +56,7 @@ function UnderOrderPoint() {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
+                const commentsResponse = await axios.get('http://127.0.0.1:8000/api/comment/');
                 const transformedData = data.results.map((item) => ({
                     id: item.id,
                     product_code: item.product.product_code,
@@ -52,10 +66,10 @@ function UnderOrderPoint() {
                     orderpoint: item.reorder_point,
                     disabled: addItems.some(addItem => addItem.product_code === item.product.product_code)
                 }));
-                console.log(addItems);
-    
-                setData(transformedData);
-                console.log('Transformed Data:', transformedData);
+
+                const mergedData = mergeProductAndComments(transformedData,commentsResponse.data);
+                console.log(mergedData)
+                setData(mergedData);
             } catch (error) {
                 console.error('Fetch error:', error);
             }
@@ -64,6 +78,18 @@ function UnderOrderPoint() {
         fetchInventoryData(); // 2番目の非同期処理を開始
     }, [currentPage, category, addItems]); // addItems ステートが更新された際に再実行
     
+    function CommentButton({ hasComments, ...props }) {
+        const iconColor = hasComments ? "primary" : "disabled";
+    
+        return (
+            <Button 
+                startIcon={<CommentIcon color={iconColor} />}
+                {...props}
+            >
+                コメント
+            </Button>
+        );
+    }
 
     const columns: GridColDef[] = [
         {field: 'product_code', headerName: 'インストア', flex: 1 },
@@ -97,22 +123,12 @@ function UnderOrderPoint() {
             headerName: 'コメント', 
             flex: 1,
             renderCell: (params) => {
-                const openCommentModal = () => {
-                    if (params.row) {
-                        setSelectedItem(params.row.product_code);
-                        console.log(selectedItem)
-                        setCommentModalIsOpen(true);
-                    } else {
-                        console.warn('params.row is undefined');
-                    }
-                };
-          
+                const commentData = params.row.comment;          
                 return (
-                    <div>
-                        <button onClick={openCommentModal}>
-                            コメントを追加
-                        </button>
-                    </div>
+                    <CommentButton
+                    hasComments={params.row.comment !== "コメントなし"}
+                    onClick={() => {setSelectedItem(params.row.product_code); setCommentModalIsOpen(true);}}
+                />  
                 );
             },
         },  

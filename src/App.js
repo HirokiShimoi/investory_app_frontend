@@ -5,6 +5,7 @@ import TodoForm from './pages/todo';
 import Search from './pages/search';
 import CheckedItem from './pages/checkeditem.tsx';
 import InventoryUpdate from './pages/InventoryUpdate';
+import ProductUpdate from './pages/ProductUpdate';
 import { AuthProvider } from './context/authcontext';
 import { SelectedRowsProvider } from './context/selectcontext';
 import Header from './pages/header';
@@ -47,6 +48,7 @@ function App() {
                             <Route path="/todo/" element= {<TodoForm/>}/>
                             <Route path="/search/" element= {<Search/>}/>
                             <Route path="/inventory_update/" element= {<InventoryUpdate/>}/>
+                            <Route path="/product_update/" element= {<ProductUpdate/>}/>
                         </Routes>
                 </Router>
                 </ThemeProvider>

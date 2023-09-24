@@ -59,7 +59,7 @@ export default function ButtonAppBar() {
                                 在庫データ更新
                             </ListItemButton>
                             <Divider />
-                            <ListItemButton onClick={() => handleNavigation('/inventory_update/')}>
+                            <ListItemButton onClick={() => handleNavigation('/product_update/')}>
                                 <ListItemIcon>
                                     <UpdateIcon />
                                 </ListItemIcon>

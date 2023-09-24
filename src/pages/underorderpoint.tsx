@@ -20,7 +20,7 @@ function UnderOrderPoint() {
     const [category, setCategory] = useState('日本酒');
     const {selectedRows, setSelectedRows} = useContext<any>(SelectedRowsContext)
     const [addItems, setAddItems] = useState<GridRowsProp>([]);
-    const [comments, setComments] = useState([]);
+    const [selectedComment, setSelectedComment] = useState('');
 
     const mergeProductAndComments = (products,comments) => {
         return products.map(product => {
@@ -28,6 +28,7 @@ function UnderOrderPoint() {
             return {
                 ...product,
                 comment: relatedComment ? 'コメントあり' : 'コメントなし',
+                commentText: relatedComment ? relatedComment.text : null
             };
         });
     };
@@ -66,9 +67,7 @@ function UnderOrderPoint() {
                     orderpoint: item.reorder_point,
                     disabled: addItems.some(addItem => addItem.product_code === item.product.product_code)
                 }));
-
                 const mergedData = mergeProductAndComments(transformedData,commentsResponse.data);
-                console.log(mergedData)
                 setData(mergedData);
             } catch (error) {
                 console.error('Fetch error:', error);
@@ -80,9 +79,9 @@ function UnderOrderPoint() {
     
     function CommentButton({ hasComments, ...props }) {
         const iconColor = hasComments ? "primary" : "disabled";
-    
         return (
             <Button 
+                color={hasComments ? "primary" : "inherit"}
                 startIcon={<CommentIcon color={iconColor} />}
                 {...props}
             >
@@ -123,17 +122,22 @@ function UnderOrderPoint() {
             headerName: 'コメント', 
             flex: 1,
             renderCell: (params) => {
-                const commentData = params.row.comment;          
+                const commentData = params.row.comment;        
                 return (
                     <CommentButton
                     hasComments={params.row.comment !== "コメントなし"}
-                    onClick={() => {setSelectedItem(params.row.product_code); setCommentModalIsOpen(true);}}
+                    onClick={() => {
+                        setSelectedItem(params.row.product_code); 
+                        if (params.row.commentText) { 
+                            setSelectedComment(params.row.commentText);
+                        }
+                        setCommentModalIsOpen(true);
+                    }}
                 />  
                 );
             },
         },  
     ]
-
     const handlePageChange = (newPage) => {
         setcurrentPage(newPage)
     }
@@ -199,7 +203,7 @@ function UnderOrderPoint() {
                 isOpen={commentmodalIsOpen}
                 closeModal={() => setCommentModalIsOpen(false)}
                 selectedItem = {selectedItem}
-                selectcomments= {null}
+                selectcomments= {selectedComment}
             />
             <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
                 <Button variant="contained" color="primary" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1}>

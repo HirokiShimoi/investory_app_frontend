@@ -12,7 +12,7 @@ function Login() {
     const { login, setLogin ,user ,setUser } = useContext(AuthContext)
 
     const onSubmit = (data) => {
-        axios.post('test_endpoint',data)
+        axios.post('http://127.0.0.1:8000/api/user_login/',data)
         .then(response => {
             if(setUser) {
                 setUser(response.data);

@@ -18,11 +18,14 @@ import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantity
 import { useNavigate } from 'react-router-dom';
 import ListItemButton from '@mui/material/ListItemButton';
 import Divider from '@mui/material/Divider';
+import { useContext } from 'react';
+import { AuthContext } from '../context/authcontext';
 
 export default function ButtonAppBar() {
 
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const navigate = useNavigate();
+    const { login, user,logout} = useContext(AuthContext)
 
     const toggleDrawer = (open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -99,7 +102,9 @@ export default function ButtonAppBar() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                       酒やの鍵本
                     </Typography>
-                    <Button color="inherit">Login</Button>
+                    <Button color="inherit" onClick={login ? logout : null}>
+                        {login ? 'Logout' : 'Login'}
+                    </Button>
                 </Toolbar>
             </AppBar>
         </Box>

@@ -7,6 +7,13 @@ import {Tabs, Tab, Button, Box} from '@mui/material';
 import { SelectedRowsContext } from '../context/selectcontext'
 import axios from "axios";
 import CommentIcon from '@mui/icons-material/Comment';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 
 function UnderOrderPoint() {
@@ -21,6 +28,11 @@ function UnderOrderPoint() {
     const {selectedRows, setSelectedRows} = useContext<any>(SelectedRowsContext)
     const [addItems, setAddItems] = useState<GridRowsProp>([]);
     const [selectedComment, setSelectedComment] = useState('');
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);  
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+
 
     const mergeProductAndComments = (products,comments) => {
         return products.map(product => {
@@ -74,8 +86,8 @@ function UnderOrderPoint() {
             }
         };
     
-        fetchInventoryData(); // 2番目の非同期処理を開始
-    }, [currentPage, category, addItems]); // addItems ステートが更新された際に再実行
+        fetchInventoryData(); 
+    }, [currentPage, category, addItems]); 
     
     function CommentButton({ hasComments, ...props }) {
         const iconColor = hasComments ? "primary" : "disabled";
@@ -100,7 +112,6 @@ function UnderOrderPoint() {
             console.log(params)
             if (params.row) {
                 setSelectedItem(params.row.product_code);
-                console.log(selectedItem)
                 setModalIsOpen(true);
             } else {
                 console.warn('params.row is undefined');
@@ -162,13 +173,32 @@ function UnderOrderPoint() {
         newSelectedRows.forEach(row => {
             axios.post('http://127.0.0.1:8000/api/selecteditem/', row)
             .then(data => {
-                console.log('Success:', data);
+                setSnackbarMessage("アイテムが正常に追加されました。");
+                setSnackbarSeverity("success");
+                setOpenSnackbar(true);
+                setIsConfirmOpen(false);
             })
             .catch((error) => {
-                console.error('Error:', error);
+                setOpenSnackbar(false);
             });
         });
     };
+    
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+    }
+
+    const handleAddConfirmation = () => {
+        setIsConfirmOpen(true);
+    }
+    const handleCloseConfirmDialog = () => {
+        setIsConfirmOpen(false);
+    }
+
+    const confirmAdd = () => {
+        handleAddConfirmation();
+        handleAddToDatabase();
+    }
 
 
     return (
@@ -214,9 +244,30 @@ function UnderOrderPoint() {
                     次へ
                 </Button>
                 <Box mx={1}></Box>
-                <Button variant="contained" color="primary" onClick={handleAddToDatabase}>
+                <Button variant="contained" color="primary" onClick={handleAddConfirmation}>
                     チェックリストに追加
                 </Button>
+                <Dialog open={isConfirmOpen} onClose={handleCloseConfirmDialog}>
+                    <DialogTitle>{"アイテムを追加しますか？"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            選択されたアイテムを追加します。
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseConfirmDialog} color="primary">
+                        キャンセル
+                        </Button>
+                        <Button onClick={confirmAdd} color="secondary">
+                        追加
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar} >
+                    <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} variant="filled">
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
             </Box>
         </div>
     )

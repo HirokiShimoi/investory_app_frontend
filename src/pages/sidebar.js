@@ -11,7 +11,7 @@ const Sidebar = () => {
 const navigate = useNavigate()
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center',height: '80vh'}}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center',height: '100vh'}}>
         <Box sx={{ marginTop: 4 }}>
             <SimpleCalendar />
         </Box>

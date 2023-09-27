@@ -4,6 +4,14 @@ import { DataGrid, GridColDef, GridRowsProp, GridValueGetterParams, roRO } from 
 import {Tabs, Tab} from '@mui/material';
 import Button from '@mui/material/Button';
 import CommentModal from './commentmodal';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+
 
 
 type Product = {
@@ -30,11 +38,27 @@ function CheckedItem() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<Product | null>(null);
     const [selectedComment, setSelectedComment] = useState<string | null>(null);
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);  
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+
+    const handleDeleteConfirmation = () => {
+      setIsConfirmOpen(true);
+  }
+
+    const handleCloseConfirmDialog = () => {
+      setIsConfirmOpen(false);
+  }
+
+  const confirmDelete = () => {
+    handleCloseConfirmDialog();
+    handleDelete();
+}
 
     const mergeProductAndComments = (products: Product[], comments: Comment[]) => {
         return products.map(product => {
           	const relatedComment = comments.find(comment => comment.product === product.product_code);
-            console.log(comments)
           	return {
           	  	...product,
           	  	comment: relatedComment ? 'コメントあり' : 'コメントなし',
@@ -42,34 +66,37 @@ function CheckedItem() {
         });
     };
 
+    const fetchAndSetData = () => {
+      const fetchSelectedData = axios.get('http://127.0.0.1:8000/api/selecteditem/');
+      const fetchComments = axios.get('http://127.0.0.1:8000/api/comment/');
+      Promise.all([fetchSelectedData, fetchComments])
+          .then(([selectedDataRes, commentsRes]) => {
+            console.log("Fetched data and comments: ", selectedDataRes.data, commentsRes.data); // この行を追加
+            const transformedData: Product[] = selectedDataRes.data.map((item: Product) => {
+               return {
+                  id: item.id,
+                  product_code: item.product_code,
+                  product_name: item.product_name,
+                  inventory: item.inventory,
+                  category: item.category,
+                  orderpoint: item.orderpoint,
+              };
+            });
+          setComments(commentsRes.data);
+          const mergedData = mergeProductAndComments(transformedData, commentsRes.data);
+          setSelectedData(mergedData);
+          console.log('Comments data:', commentsRes.data);
+          })	
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
+    }
 
     useEffect(() => {
-        const fetchSelectedData = axios.get('http://127.0.0.1:8000/api/selecteditem/');
-        const fetchComments = axios.get('http://127.0.0.1:8000/api/comment/');
-        Promise.all([fetchSelectedData, fetchComments])
-          	.then(([selectedDataRes, commentsRes]) => {
-            	console.log("Fetched data and comments: ", selectedDataRes.data, commentsRes.data); // この行を追加
-            	const transformedData: Product[] = selectedDataRes.data.map((item: Product) => {
-            	 	return {
-            	    	id: item.id,
-            	    	product_code: item.product_code,
-            	    	product_name: item.product_name,
-            	    	inventory: item.inventory,
-            	    	category: item.category,
-            	    	orderpoint: item.orderpoint,
-            		};
-            	});
-            setComments(commentsRes.data);
-            const mergedData = mergeProductAndComments(transformedData, commentsRes.data);
-            setSelectedData(mergedData);
-            console.log('Comments data:', commentsRes.data);
-          	})	
-          	.catch(error => {
-            	console.error('Error fetching data:', error);
-          	});
-      }, []);
+      fetchAndSetData();
+  }, []);
 
-      useEffect(() => {
+    useEffect(() => {
         if (selectedItem) {
             const relatedComment = comments.find(comment => comment.product === selectedItem.product_code);
             if (relatedComment) {
@@ -91,17 +118,24 @@ function CheckedItem() {
             data: {ids:deleteProductId}
         })
         .then(() => {
-            const updateData = selectedData.filter(item => !selectedRows.includes(item.id));
+            const updateData = selectedData.filter(item => !deleteProductId.includes(item.product_code));
             setSelectedData(updateData);
             setSelectedRows([]);
+            setSnackbarMessage("アイテムが正常に削除されました。");
+            setSnackbarSeverity("success");
+            setOpenSnackbar(true);
         })
         .catch((error => {
-            console.log('Delete failed:', error);
+          setOpenSnackbar(false);
         }))
     }
 
+    const handleCloseSnackbar = () => {
+      setOpenSnackbar(false);
+  }
+
+
     const handleRowSelectionModelChange = (newSelection:any) => {
-        console.log("newSelection: ", newSelection);
         const rowSelectdata = selectedData.filter((row) => newSelection.includes(row.id));
         setSelectedRows(rowSelectdata);
     };
@@ -134,11 +168,32 @@ function CheckedItem() {
                  checkboxSelection
                  onRowSelectionModelChange={handleRowSelectionModelChange}
             />
-
-            <Button variant='contained' color="secondary" onClick={handleDelete}>
+            <Button variant='contained' color="secondary" onClick={handleDeleteConfirmation}>
                 delete Selected
             </Button>
             <CommentModal isOpen={isModalOpen} closeModal={() => setIsModalOpen(false)} selectedItem={selectedItem} selectcomments={selectedComment}/>
+            <Dialog open={isConfirmOpen} onClose={handleCloseConfirmDialog}>
+              <DialogTitle>{"アイテムを削除しますか？"}</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                選択されたアイテムを削除します。
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseConfirmDialog} color="primary">
+                    キャンセル
+                </Button>
+                <Button onClick={confirmDelete} color="secondary">
+                    削除
+                </Button>
+            </DialogActions>
+            </Dialog>
+
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+              <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} variant="filled">
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
         </div>
     )
 }

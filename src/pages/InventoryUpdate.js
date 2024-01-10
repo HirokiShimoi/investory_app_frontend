@@ -25,13 +25,14 @@ function InventoryUpdate() {
         setFile(selectedFile);
         setErrorMessage(null); // エラーメッセージをクリア
     }
+    const baseURL = process.env.REACT_APP_API_BASE_URL;
 
     const handleUpdate = () => {
         setLoading(true);
         const formData = new FormData();
         formData.append('file',file)
 
-        axios.put('http://127.0.0.1:8000/api/update_inventory/', formData)
+        axios.put(`${baseURL}://127.0.0.1:8000/api/update_inventory/`, formData)
             .then(response => {
                 setLoading(false);
                 setMessage("在庫データのアップロードに成功しました")

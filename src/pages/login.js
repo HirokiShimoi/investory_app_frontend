@@ -14,11 +14,12 @@ function Login() {
     const { login, setLogin ,user ,setUser } = useContext(AuthContext);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const baseURL = process.env.REACT_APP_API_BASE_URL;
 
     const onSubmit = async (data) => {
         setLoading(true)
             try {
-                const response = await axios.post('http://127.0.0.1:8000/api/user_login/', data);
+                const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/user_login/`, data);
                 if (response.data.status === 'success') {
                     setUser(response.data);
                     setLogin(true);

@@ -71,7 +71,6 @@ function CheckedItem() {
       const fetchComments = axios.get('http://127.0.0.1:8000/api/comment/');
       Promise.all([fetchSelectedData, fetchComments])
           .then(([selectedDataRes, commentsRes]) => {
-            console.log("Fetched data and comments: ", selectedDataRes.data, commentsRes.data); // この行を追加
             const transformedData: Product[] = selectedDataRes.data.map((item: Product) => {
                return {
                   id: item.id,
@@ -85,7 +84,6 @@ function CheckedItem() {
           setComments(commentsRes.data);
           const mergedData = mergeProductAndComments(transformedData, commentsRes.data);
           setSelectedData(mergedData);
-          console.log('Comments data:', commentsRes.data);
           })	
           .catch(error => {
             console.error('Error fetching data:', error);
@@ -101,16 +99,11 @@ function CheckedItem() {
             const relatedComment = comments.find(comment => comment.product === selectedItem.product_code);
             if (relatedComment) {
                 setSelectedComment(relatedComment.text);  // 仮にコメントがtextフィールドに保存されているとします。
-                console.log('Setting selectedComment:', relatedComment.text); // 追加
             } else {
                 setSelectedComment(null);
             }
         }
     }, [selectedItem, comments]);
-
-    useEffect(() => {
-      console.log("Updated selectedComment is: ", selectedComment);
-  }, [selectedComment]);
 
     const handleDelete = () => {
         const deleteProductId = selectedRows.map(row => row.product_code);

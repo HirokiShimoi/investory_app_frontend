@@ -18,7 +18,7 @@ const CommentModal = ({isOpen, closeModal,selectedItem,selectcomments}) => {
 
     const handlesubmit = () => {
         console.log(selectedItem);
-        axios.post('http://127.0.0.1:8000/api/comment/',{
+        axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/comment/`,{
             product:selectedItem,
             text: comment,
         })
@@ -34,7 +34,7 @@ const CommentModal = ({isOpen, closeModal,selectedItem,selectcomments}) => {
 
     return(
         <>
-                    <Dialog open={isOpen} onClose={closeModal}>
+            <Dialog open={isOpen} onClose={closeModal}>
             <DialogTitle>コメント</DialogTitle>
             <DialogContent>
                 <DialogContentText>

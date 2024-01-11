@@ -56,6 +56,7 @@ function CheckedItem() {
     handleDelete();
 }
 
+
     const mergeProductAndComments = (products: Product[], comments: Comment[]) => {
         return products.map(product => {
           	const relatedComment = comments.find(comment => comment.product === product.product_code);
@@ -67,8 +68,8 @@ function CheckedItem() {
     };
 
     const fetchAndSetData = () => {
-      const fetchSelectedData = axios.get('http://127.0.0.1:8000/api/selecteditem/');
-      const fetchComments = axios.get('http://127.0.0.1:8000/api/comment/');
+      const fetchSelectedData = axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/selecteditem/`);
+      const fetchComments = axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/comment/`);
       Promise.all([fetchSelectedData, fetchComments])
           .then(([selectedDataRes, commentsRes]) => {
             const transformedData: Product[] = selectedDataRes.data.map((item: Product) => {
@@ -107,7 +108,7 @@ function CheckedItem() {
 
     const handleDelete = () => {
         const deleteProductId = selectedRows.map(row => row.product_code);
-        axios.delete('http://127.0.0.1:8000/api/selecteditem/',{
+        axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/selecteditem/`,{
             data: {ids:deleteProductId}
         })
         .then(() => {

@@ -29,10 +29,11 @@ const handleConfirmDelete = async () => {
     handleCloseDialog();
 };
 
+
 useEffect(() => {
     const fetchData = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/todo/`);
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/todo/`);
             setTodos(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -44,7 +45,7 @@ useEffect(() => {
 const handleSubmit = async () => {
     if (validate()) {
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/todo/`, { text: todoText, due_date: dueDate });
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/todo/`, { text: todoText, due_date: dueDate });
             const newTodo = response.data;
             console.log("Submitted:", response.data);
             setTodos(prevTodos => [...prevTodos, newTodo]);
@@ -57,7 +58,7 @@ const handleSubmit = async () => {
 
 const handleDelete = async (id) => {
     try {
-        await axios.delete(`http://127.0.0.1:8000/api/todo/${id}/`);
+        await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/todo/${id}/`);
         setTodos(todos.filter((todo) => todo.id !== id));
     }
     catch (error) {

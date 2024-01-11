@@ -4,10 +4,9 @@ import axios from "axios";
 
 function ReorderPointModal({ isOpen, closeModal,selectedItem }) {
     const [newReorderPoint, setNewReorderPoint] = useState("");
-  
     const handleSubmit = () => {
 
-        axios.patch(`http://127.0.0.1:8000/api/orderline/${selectedItem}/`,{
+        axios.patch(`${process.env.REACT_APP_API_BASE_URL}/api/orderline/${selectedItem}/`,{
             reorder_point: newReorderPoint
         })
         .then(response => {

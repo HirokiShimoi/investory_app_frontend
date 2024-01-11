@@ -14,6 +14,7 @@ function ProductUpdate() {
     const [message, setMessage] = useState(null);
     const [errormessage, setErrorMessage] = useState(null);
 
+
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
         if (selectedFile && !selectedFile.name.endsWith('.csv')) {
@@ -30,7 +31,7 @@ function ProductUpdate() {
         const formData = new FormData();
         formData.append('file', file)
 
-        axios.put('http://127.0.0.1:8000/api/update_product/', formData)
+        axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/update_product/`, formData)
             .then(response => {
                 setLoading(false);
                 setMessage("製品データのアップロードに成功しました")

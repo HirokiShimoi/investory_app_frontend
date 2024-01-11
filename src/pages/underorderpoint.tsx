@@ -33,9 +33,6 @@ function UnderOrderPoint() {
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
 
-    const baseURL = process.env.REACT_APP_API_BASE_URL;
-
-
     const mergeProductAndComments = (products,comments) => {
         return products.map(product => {
             const relatedComment = comments.find(comment => comment.product === product.product_code);
@@ -50,7 +47,7 @@ function UnderOrderPoint() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${baseURL}/api/selecteditem/`);
+                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/selecteditem/`);
                 const newAddItems = response.data;
                 if (JSON.stringify(newAddItems) !== JSON.stringify(addItems)) {
                     setAddItems(newAddItems);
@@ -66,12 +63,12 @@ function UnderOrderPoint() {
     useEffect(() => {
         const fetchInventoryData = async () => {
             try {
-                const response = await fetch(`${baseURL}/api/inventory/reorder/?page=${currentPage}&category=${category}`);
+                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/inventory/reorder/?page=${currentPage}&category=${category}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-                const commentsResponse = await axios.get(`${baseURL}/api/comment/`);
+                const commentsResponse = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/comment/`);
                 const transformedData = data.results.map((item) => ({
                     id: item.id,
                     product_code: item.product.product_code,
@@ -173,7 +170,7 @@ function UnderOrderPoint() {
 
     const handleAddToDatabase = () => {
         newSelectedRows.forEach(row => {
-            axios.post(`${baseURL}/api/selecteditem/`, row)
+            axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/selecteditem/`, row)
             .then(data => {
                 setSnackbarMessage("アイテムが正常に追加されました。");
                 setSnackbarSeverity("success");

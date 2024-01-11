@@ -18,7 +18,7 @@ function Search() {
     const handleSearch = () => {
         if (keyword) {
             console.log(keyword)
-            axios.get(`http://127.0.0.1:8000/api/products/?keyword=${keyword}`)
+            axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products/?keyword=${keyword}`)
             .then(response => {
               console.log(response.data);
               setResults(response.data.results)
@@ -28,7 +28,7 @@ function Search() {
             });
         }
         if (storeNumber) {
-          axios.get(`http://127.0.0.1:8000/api/products/${storeNumber}/`)
+          axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/products/${storeNumber}/`)
             .then(response => {
               console.log(response.data);
               setResults(Array.isArray(response.data) ? response.data : [response.data]);
@@ -44,7 +44,7 @@ function Search() {
         
         console.log("Toggling for ID:", product_code);
         console.log("Toggling for ID:", currentState);
-        axios.put(`http://127.0.0.1:8000/api/products/is_active/${product_code}/`,{is_active: !currentState})
+        axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/products/is_active/${product_code}/`,{is_active: !currentState})
         .then(response => {
             setResults(results.map(item => {
                 if (item.product_code === product_code) {

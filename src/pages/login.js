@@ -7,14 +7,12 @@ import axios from 'axios';
 import Alert from '@mui/material/Alert';
 
 
-
 function Login() {
     const {register, handleSubmit, formState: { errors }} = useForm();
     const [errorMessage, setErrorMessage] = useState(null);
     const { login, setLogin ,user ,setUser } = useContext(AuthContext);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const baseURL = process.env.REACT_APP_API_BASE_URL;
 
     const onSubmit = async (data) => {
         setLoading(true)

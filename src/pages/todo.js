@@ -2,8 +2,10 @@ import React, { useState,useEffect } from 'react';
 import { TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,Box,Grid,Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle  } from '@mui/material';
 
 import axios from 'axios';
+import useAuth from '../context/useauth';
 
 const TodoForm = () => {
+    useAuth();
     const [todoText, setTodoText] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [todos,setTodos] = useState([]);
@@ -13,6 +15,8 @@ const TodoForm = () => {
         todoText: '',
         dueDate: ''
     });
+    const [errorMessage, setErrorMessage] = useState(null);
+
 
 const handleOpenDialog = (id) => {
     setSelectedId(id);
@@ -36,8 +40,8 @@ useEffect(() => {
             const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/todo/`);
             setTodos(response.data);
         } catch (error) {
-            console.error("Error fetching data:", error);
-            }
+            setErrorMessage("データの取得に失敗しました")
+        }
         };
         fetchData();
     },[]);
@@ -51,7 +55,7 @@ const handleSubmit = async () => {
             setTodos(prevTodos => [...prevTodos, newTodo]);
     
         } catch (error) {
-            console.error("There was an error submitting the todo", error);
+            setErrorMessage("データの取得に失敗しました")
         }
       };
     }
@@ -62,7 +66,7 @@ const handleDelete = async (id) => {
         setTodos(todos.filter((todo) => todo.id !== id));
     }
     catch (error) {
-        console.error("Error deleting todo:", error)
+        setErrorMessage("データの取得に失敗しました")
     }
   };
 

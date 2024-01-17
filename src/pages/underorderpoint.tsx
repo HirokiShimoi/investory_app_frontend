@@ -14,9 +14,13 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import useAuth from '../context/useauth';
+
+
 
 
 function UnderOrderPoint() {
+    useAuth();
 
     const [data,setData] = useState<GridRowsProp>([]);
     const [modalIsOpen, setModalIsOpen] = useState(false);

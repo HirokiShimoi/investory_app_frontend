@@ -11,24 +11,39 @@ import axios from "axios";
 
 const CommentModal = ({isOpen, closeModal,selectedItem,selectcomments}) => {
     const [comment,setComment] = useState(selectcomments || "");
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+
     
     useEffect(() => {
-        setComment(selectcomments || "");
+        setComment("");
+        setSuccessMessage('');
+        setErrorMessage('');
     },[selectcomments]);
 
+    useEffect(() => {if (isOpen) {
+        // モーダルが開かれた時、コメントをリセット
+        setComment(selectcomments || "");
+        // エラーメッセージと成功メッセージもリセット
+        setErrorMessage('');
+        setSuccessMessage('');
+        }
+        }, [isOpen, selectcomments]);
+
+
     const handlesubmit = () => {
-        console.log(selectedItem);
         axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/comment/`,{
             product:selectedItem,
             text: comment,
         })
 
         .then(response => {
-            console.log('Comment saved:', response);
+            setSuccessMessage('コメントが正常に保存されました！');
             closeModal();
         })
         .catch(error => {
-            console.log('Save comment error:', error);
+            setErrorMessage('コメントの保存に失敗しました。');
         });
     };
 

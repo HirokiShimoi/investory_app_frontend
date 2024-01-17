@@ -7,8 +7,10 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
+import useAuth from '../context/useauth';
 
 function ProductUpdate() {
+    useAuth();
     const [file, setFile] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState(null);

@@ -7,6 +7,7 @@ import Container from '@mui/material/Container';
 import { styled } from '@mui/material/styles';
 import Sidebar from './sidebar';
 import { useNavigate } from 'react-router';
+import useAuth from '../context/useauth';
 
 const StyledCard = styled(Card)({
     width: '90%',
@@ -44,6 +45,7 @@ const contentStyle = {
 const gridContainerStyle = {marginBottom: '30px',marginTop: '30px'}
 
 const TopPage = () => {
+    useAuth();
     const navigate = useNavigate();
     const handleNavigation = (path) => {
         navigate(path);
@@ -54,21 +56,21 @@ const TopPage = () => {
             <Sidebar />
             <Container maxWidth="lg">
                 <Grid container spacing={3} justifyContent="space-around">
-                    <Grid item xs={4} style={{ width: '100%' }}>
+                    <Grid item xs={12} sm={6} md={4} style={{ width: '100%' }}>
                         <StyledCard onClick={() => handleNavigation('/inventory_update/')}>
                             <CardContent style={contentStyle}>
                                 <Typography variant="h5">在庫データを更新</Typography>
                             </CardContent>
                         </StyledCard>
                     </Grid>
-                    <Grid item xs={4} style={{ width: '100%' }}>
+                    <Grid item xs={12} sm={6} md={4} style={{ width: '100%' }}>
                         <StyledCard onClick={() => handleNavigation('/inventory_update/')}>
                             <CardContent style={contentStyle}>
                                 <Typography variant="h5">商品データを更新</Typography>
                             </CardContent>
                         </StyledCard>
                     </Grid>
-                    <Grid item xs={4} style={{ width: '100%' }}>
+                    <Grid item xs={12} sm={6} md={4} style={{ width: '100%' }}>
                         <StyledCard onClick={() => handleNavigation('/search/')}>
                             <CardContent style={contentStyle}>
                                 <Typography variant="h5">商品マスタの検索</Typography>
@@ -77,21 +79,21 @@ const TopPage = () => {
                     </Grid>
                 </Grid>
                 <Grid container spacing={3} justifyContent="space-around">
-                    <Grid item xs={4} style={{ width: '100%' }}>
+                    <Grid item xs={12} sm={6} md={4} style={{ width: '100%' }}>
                         <StyledCard onClick={() => handleNavigation('/under_orderpoint/')}>
                             <CardContent style={contentStyle}>
                                 <Typography variant="h5">発注点を下回る商品 </Typography>
                             </CardContent>
                         </StyledCard>
                     </Grid>
-                    <Grid item xs={4} style={{ width: '100%' }}>
+                    <Grid item xs={12} sm={6} md={4} style={{ width: '100%' }}>
                         <StyledCard onClick={() => handleNavigation('/checked_item/')}>
                             <CardContent style={contentStyle}>
                                 <Typography variant="h5">Check済みアイテム </Typography>
                             </CardContent>
                         </StyledCard>
                     </Grid>
-                    <Grid item xs={4} style={{ width: '100%' }}>
+                    <Grid item xs={12} sm={6} md={4} style={{ width: '100%' }}>
                         <StyledCard onClick={() => handleNavigation('/todo/')}>
                             <CardContent style={contentStyle}>
                                 <Typography variant="h5">発注TODO </Typography>

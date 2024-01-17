@@ -25,7 +25,14 @@ export default function ButtonAppBar() {
 
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const navigate = useNavigate();
-    const { login, user,logout} = useContext(AuthContext)
+    const { login, user,logout} = useContext(AuthContext);
+
+    const handlelogout = () => {
+        if (window.confirm("ログアウトしますか？")) {
+            logout();
+            handleNavigation('');
+        }
+    }
 
     const toggleDrawer = (open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -102,9 +109,15 @@ export default function ButtonAppBar() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                       酒やの鍵本
                     </Typography>
-                    <Button color="inherit" onClick={login ? logout : null}>
-                        {login ? 'Logout' : 'Login'}
-                    </Button>
+                    {user ? (
+                        <Button color="inherit" onClick={handlelogout}>
+                            Logout
+                        </Button>
+                    ) : (
+                        <Button color="inherit" onClick={() => handleNavigation('/')}>
+                            Login
+                        </Button>
+                    )}
                 </Toolbar>
             </AppBar>
         </Box>

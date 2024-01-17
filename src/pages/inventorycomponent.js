@@ -14,11 +14,6 @@ function InventoryComponent() {
         setModalIsOpen(false);
     };
 
-    const updateReorderPoint = (newReorderPoint) => {
-        // ここでAPIを呼び出して発注点を更新
-        console.log(`新しい発注点: ${newReorderPoint} for 商品: ${selectedItem.product_name}`);
-      };
-
       
     return (
         <div>
@@ -27,7 +22,6 @@ function InventoryComponent() {
             <ReorderPointModal
               isOpen={modalIsOpen}
               closeModal={closeModal}
-              updateReorderPoint={updateReorderPoint}
             />
         </div>
     )

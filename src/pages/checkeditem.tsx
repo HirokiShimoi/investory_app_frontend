@@ -145,7 +145,6 @@ function CheckedItem() {
             <span onClick={() => {
               setSelectedItem(params.row);
               setIsModalOpen(true);
-              console.log(params.row)
             }}>
               {commentData}
             </span>
@@ -163,7 +162,7 @@ function CheckedItem() {
                  onRowSelectionModelChange={handleRowSelectionModelChange}
             />
             <Button variant='contained' color="secondary" onClick={handleDeleteConfirmation}>
-                delete Selected
+                  削除する
             </Button>
             <CommentModal isOpen={isModalOpen} closeModal={() => setIsModalOpen(false)} selectedItem={selectedItem} selectcomments={selectedComment}/>
             <Dialog open={isConfirmOpen} onClose={handleCloseConfirmDialog}>
